@@ -5,11 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import ResolutionForm from "@/components/ResolutionForm";
 import ResolutionTracker from "@/components/ResolutionTracker";
 import ProgressStats from "@/components/ProgressStats";
+import { Resolution } from "@/types/database";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { connected, publicKey } = useWallet();
-  const [activeResolution, setActiveResolution] = useState(null);
+  const [activeResolution, setActiveResolution] = useState<Resolution | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,10 +20,17 @@ const Dashboard = () => {
     }
 
     const fetchResolution = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/");
+        return;
+      }
+
       const { data, error } = await supabase
         .from("resolutions")
         .select("*")
-        .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
+        .eq("user_id", user.id)
         .eq("status", "active")
         .single();
 
@@ -43,7 +51,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         {!activeResolution ? (
-          <ResolutionForm walletAddress={publicKey?.toString()} />
+          <ResolutionForm walletAddress={publicKey?.toString() || ''} />
         ) : (
           <div className="space-y-8">
             <ProgressStats resolution={activeResolution} />

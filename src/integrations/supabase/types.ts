@@ -9,7 +9,77 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      daily_updates: {
+        Row: {
+          completed: boolean
+          created_at: string | null
+          date: string
+          id: string
+          resolution_id: string
+        }
+        Insert: {
+          completed: boolean
+          created_at?: string | null
+          date: string
+          id?: string
+          resolution_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string | null
+          date?: string
+          id?: string
+          resolution_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_updates_resolution_id_fkey"
+            columns: ["resolution_id"]
+            isOneToOne: false
+            referencedRelation: "resolutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resolutions: {
+        Row: {
+          created_at: string | null
+          description: string
+          end_date: string
+          id: string
+          start_date: string
+          status: Database["public"]["Enums"]["resolution_status"] | null
+          updated_at: string | null
+          user_id: string
+          wager_amount: number
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          end_date: string
+          id?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["resolution_status"] | null
+          updated_at?: string | null
+          user_id: string
+          wager_amount: number
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["resolution_status"] | null
+          updated_at?: string | null
+          user_id?: string
+          wager_amount?: number
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +88,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      resolution_status: "active" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never

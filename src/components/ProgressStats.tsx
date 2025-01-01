@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Resolution, DailyUpdate } from "@/types/database";
 
 interface ProgressStatsProps {
-  resolution: any;
+  resolution: Resolution;
 }
 
 const ProgressStats = ({ resolution }: ProgressStatsProps) => {
@@ -16,7 +17,7 @@ const ProgressStats = ({ resolution }: ProgressStatsProps) => {
     const fetchStats = async () => {
       const { data, error } = await supabase
         .from("daily_updates")
-        .select("completed")
+        .select("*")
         .eq("resolution_id", resolution.id);
 
       if (!error && data) {

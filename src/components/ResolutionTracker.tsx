@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { DailyUpdate } from "@/types/database";
 
 interface ResolutionTrackerProps {
   resolutionId: string;
@@ -9,7 +10,7 @@ interface ResolutionTrackerProps {
 
 const ResolutionTracker = ({ resolutionId }: ResolutionTrackerProps) => {
   const { toast } = useToast();
-  const [updates, setUpdates] = useState<any[]>([]);
+  const [updates, setUpdates] = useState<DailyUpdate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,11 +33,13 @@ const ResolutionTracker = ({ resolutionId }: ResolutionTrackerProps) => {
   const markToday = async (completed: boolean) => {
     const today = new Date().toISOString().split("T")[0];
     
-    const { error } = await supabase.from("daily_updates").upsert({
-      resolution_id: resolutionId,
-      date: today,
-      completed,
-    });
+    const { error } = await supabase
+      .from("daily_updates")
+      .upsert({
+        resolution_id: resolutionId,
+        date: today,
+        completed,
+      });
 
     if (error) {
       toast({

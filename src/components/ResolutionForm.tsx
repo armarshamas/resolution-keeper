@@ -21,12 +21,15 @@ const ResolutionForm = ({ walletAddress }: ResolutionFormProps) => {
       const endDate = new Date();
       endDate.setFullYear(endDate.getFullYear() + 1);
 
-      const { error } = await supabase.from("resolutions").insert({
-        description: data.description,
-        wager_amount: parseFloat(data.wagerAmount),
-        wallet_address: walletAddress,
-        end_date: endDate.toISOString(),
-      });
+      const { error } = await supabase
+        .from("resolutions")
+        .insert({
+          description: data.description,
+          wager_amount: parseFloat(data.wagerAmount),
+          wallet_address: walletAddress,
+          end_date: endDate.toISOString(),
+          user_id: (await supabase.auth.getUser()).data.user?.id,
+        });
 
       if (error) throw error;
 
